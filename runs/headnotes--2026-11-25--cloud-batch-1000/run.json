@@ -31,11 +31,11 @@
   },
   "selection": "13 circuits (ca1-ca11, cadc, cafc) x 8 date windows each, one random two-month window per era (1930-1949, 1950-1962, 1963-1972, 1973-1982, 1983-1992, 1993-2002, 2003-2012, 2013-2025; ca11 and cafc 8 eras from 1982), seed 20261125. In each window, published opinions from CourtListener search in date order, about 10 per window, extended by up to three further two-month windows when short. Skipped: the 20 pilot clusters, main opinions under 1,500 characters, and duplicate copies of one decision (same reporter citation; the copy with the higher citeCount was kept). selection.jsonl lists every cluster taken, so other runs can skip them.",
   "counts": {
-    "records": 859,
-    "headnotes": 2663,
+    "records": 917,
+    "headnotes": 2859,
     "by_status": {
-      "no_holding": 26,
-      "ok": 833
+      "no_holding": 28,
+      "ok": 889
     }
   },
   "compare_with": [
