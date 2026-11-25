@@ -82,6 +82,7 @@ Each line of `records/<court_id>/<yyyy>.jsonl`, in full in
 | run | decisions | headnotes | status | notes |
 |---|---|---|---|---|
 | [headnotes--2026-11-25--cloud-pilot-20](runs/headnotes--2026-11-25--cloud-pilot-20/run.json) | 20 | 70 | complete | Pilot to compare with the Haiku run of headnotes-circuits-v1. Reconstructed prompt, unverified slugs, approximate paragraph numbers: read its caveats. |
+| [headnotes--2026-11-25--cloud-batch-1000](runs/headnotes--2026-11-25--cloud-batch-1000/run.json) | see run.json | see run.json | in progress | About 1,000 decisions across all 13 circuits and the years, same prompt as the pilot, long texts cut like the Haiku requests. `selection.jsonl` lists the clusters taken. Read its caveats. |
 
 ## Adding a run
 
