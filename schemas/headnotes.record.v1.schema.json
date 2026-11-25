@@ -5,9 +5,9 @@
   "description": "One line of runs/<run_id>/records/<court_id>/<yyyy>.jsonl: the headnotes one run produced for one CourtListener decision (cluster). The first block of fields is the envelope every record kind shares; `headnotes` is this kind's payload.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["cluster_id", "run_id", "court_id", "date_filed", "status", "headnotes"],
+  "required": ["courtlistener_cluster_id", "run_id", "court_id", "date_filed", "status", "headnotes"],
   "properties": {
-    "cluster_id": {
+    "courtlistener_cluster_id": {
       "description": "CourtListener opinion-cluster id. The key for joining across runs and kinds.",
       "type": "integer",
       "minimum": 1
@@ -35,7 +35,7 @@
       "description": "Optional lead citation, for people reading the file.",
       "type": ["string", "null"]
     },
-    "opinion_id": {
+    "courtlistener_opinion_id": {
       "description": "CourtListener opinion id whose text was sent to the model, when known.",
       "type": ["integer", "null"],
       "minimum": 1

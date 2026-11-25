@@ -6,8 +6,8 @@
 
 Each input line must already be a record in the run's record schema (see
 schemas/). Records are routed to records/<court_id>/<year>.jsonl, merged with what
-is there, sorted by cluster_id and written with the key order tools/validate.py
-expects. A cluster_id already in the run is an error unless --replace is given.
+is there, sorted by courtlistener_cluster_id and written with the key order tools/validate.py
+expects. A courtlistener_cluster_id already in the run is an error unless --replace is given.
 Only shards that receive records are rewritten, so a large run can be loaded batch by
 batch with small diffs. Afterwards, update counts in run.json and run tools/validate.py.
 
@@ -39,21 +39,21 @@ def main(argv):
     run_dir, inputs = argv[0], argv[1:]
     run_id = os.path.basename(os.path.normpath(run_dir))
 
-    existing = {}  # cluster_id -> shard rel path, across the whole run
+    existing = {}  # courtlistener_cluster_id -> shard rel path, across the whole run
     rec_root = os.path.join(run_dir, "records")
     for dirpath, _, files in os.walk(rec_root):
         for name in files:
             rel = os.path.relpath(os.path.join(dirpath, name), run_dir)
             for rec in read_jsonl(os.path.join(run_dir, rel)):
-                existing[rec["cluster_id"]] = rel
+                existing[rec["courtlistener_cluster_id"]] = rel
 
     incoming = {}
     for path in inputs:
         for rec in read_jsonl(path):
             rec.setdefault("run_id", run_id)
             if rec["run_id"] != run_id:
-                sys.exit("cluster %s has run_id %r, not %r" % (rec["cluster_id"], rec["run_id"], run_id))
-            cid = rec["cluster_id"]
+                sys.exit("cluster %s has run_id %r, not %r" % (rec["courtlistener_cluster_id"], rec["run_id"], run_id))
+            cid = rec["courtlistener_cluster_id"]
             if cid in incoming:
                 sys.exit("cluster %s appears twice in the input" % cid)
             if cid in existing and not replace:
@@ -62,7 +62,7 @@ def main(argv):
 
     touched = {}
     for rec in incoming.values():
-        touched.setdefault(shard_rel(rec), {})[rec["cluster_id"]] = rec
+        touched.setdefault(shard_rel(rec), {})[rec["courtlistener_cluster_id"]] = rec
     # a replaced record may move shard (e.g. a corrected date): drop it from the old one
     for cid in incoming:
         if cid in existing and existing[cid] != shard_rel(incoming[cid]):
@@ -72,8 +72,8 @@ def main(argv):
         merged = {}
         if os.path.exists(path):
             for rec in read_jsonl(path):
-                if rec["cluster_id"] not in incoming:
-                    merged[rec["cluster_id"]] = rec
+                if rec["courtlistener_cluster_id"] not in incoming:
+                    merged[rec["courtlistener_cluster_id"]] = rec
         merged.update(new)
         if not merged:
             os.remove(path)

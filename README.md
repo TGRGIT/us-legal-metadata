@@ -15,7 +15,7 @@ runs/
   <kind>--<YYYY-MM-DD>--<label>/      one folder per run, e.g. headnotes--2026-11-25--cloud-pilot-20
     run.json                          manifest: producer, prompt hash, input, selection, counts, caveats
     prompt.md                         the prompt, byte for byte (its sha256 is in run.json)
-    records/<court_id>/<yyyy>.jsonl   one line per decision, sorted by cluster_id
+    records/<court_id>/<yyyy>.jsonl   one line per decision, sorted by courtlistener_cluster_id
 tools/
   validate.py                         checks every run (standard library only)
   write_shards.py                     adds records to a run in canonical form
@@ -28,7 +28,7 @@ taxonomies/                           (when added) <name>.txt, one slug per line
   lives in one folder with a manifest. Runs are never edited into each other, so two runs
   over the same decisions can be compared, a bad run can be withdrawn by changing its
   status, and a new prompt version is a new run rather than a rewrite of history.
-- **One record per decision per run, keyed by `cluster_id`.** The cluster id joins a
+- **One record per decision per run, keyed by `courtlistener_cluster_id`.** The cluster id joins a
   record to CourtListener, to the citation graph, and to every other run and kind. A run
   holds each cluster at most once; a re-run of a decision goes in with `--replace` or in a
   new run.
@@ -48,7 +48,7 @@ taxonomies/                           (when added) <name>.txt, one slug per line
   ends go in `extra`, which nothing downstream may rely on.
 - **New kinds of metadata** (summaries, citation treatment, topics, judges ...) get their
   own record schema, `schemas/<kind>.record.v<N>.schema.json`, sharing the envelope fields
-  (`cluster_id`, `run_id`, `court_id`, `date_filed`, `status`, ...) and their own runs.
+  (`courtlistener_cluster_id`, `run_id`, `court_id`, `date_filed`, `status`, ...) and their own runs.
   A breaking change to a record shape is a new schema version, never an edit of the old.
 
 ## Headnotes records
@@ -57,8 +57,8 @@ Each line of `records/<court_id>/<yyyy>.jsonl`, in full in
 `schemas/headnotes.record.v1.schema.json`:
 
 ```json
-{"cluster_id": 282376, "run_id": "headnotes--2026-11-25--cloud-pilot-20", "court_id": "ca8",
- "date_filed": "1968-11-26", "case_name": "...", "citation": "403 F.2d 715", "opinion_id": 282376,
+{"courtlistener_cluster_id": 282376, "run_id": "headnotes--2026-11-25--cloud-pilot-20", "court_id": "ca8",
+ "date_filed": "1968-11-26", "case_name": "...", "citation": "403 F.2d 715", "courtlistener_opinion_id": 282376,
  "status": "ok", "input": {"paragraph_count": 5, "text_chars": 2774, "truncated": false},
  "headnotes": [{"text": "...", "concept_slugs": ["contract-formation"], "first_paragraph": 2,
    "last_paragraph": 5, "anchors": {"first": "...", "last": "..."}}],

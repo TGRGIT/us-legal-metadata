@@ -10,7 +10,7 @@ Checks, for each run:
   - every record against the run's record schema
   - record.run_id == run_id == folder name; kind == run_id prefix
   - shard path == records/<court_id>/<year of date_filed>.jsonl (unknown.jsonl when no date)
-  - records sorted by cluster_id within a shard, each cluster_id once per run
+  - records sorted by courtlistener_cluster_id within a shard, each courtlistener_cluster_id once per run
   - one JSON object per line, UTF-8, LF line endings, keys in canonical order
   - first_paragraph <= last_paragraph (and <= input.paragraph_count when given)
   - status rules: ok/no_holding need >= 1 headnote, failed needs none and an error;
@@ -38,8 +38,8 @@ except ImportError:  # pragma: no cover
     jsonschema = None
 
 # Key order every record line is written in (tools/write_shards.py uses the same).
-RECORD_KEY_ORDER = ["cluster_id", "run_id", "court_id", "date_filed", "case_name", "citation",
-                    "opinion_id", "status", "error", "input", "headnotes", "extra"]
+RECORD_KEY_ORDER = ["courtlistener_cluster_id", "run_id", "court_id", "date_filed", "case_name", "citation",
+                    "courtlistener_opinion_id", "status", "error", "input", "headnotes", "extra"]
 HEADNOTE_KEY_ORDER = ["text", "concept_slugs", "first_paragraph", "last_paragraph", "anchors"]
 
 
@@ -244,7 +244,7 @@ def validate_run(run_dir, run_schema):
             if errs:
                 continue
             n_records += 1
-            cid = rec["cluster_id"]
+            cid = rec["courtlistener_cluster_id"]
             by_status[rec["status"]] = by_status.get(rec["status"], 0) + 1
             n_headnotes += len(rec["headnotes"])
             if line != canonical_line(rec):
@@ -257,7 +257,7 @@ def validate_run(run_dir, run_schema):
                 E("%s: cluster %d already in %s" % (where, cid, seen[cid]))
             seen[cid] = where
             if prev is not None and cid <= prev:
-                E("%s: not sorted by cluster_id" % where)
+                E("%s: not sorted by courtlistener_cluster_id" % where)
             prev = cid
             status, hns = rec["status"], rec["headnotes"]
             if status == "failed":
