@@ -1,0 +1,58 @@
+{
+  "run_id": "headnotes--2026-11-25--cloud-pilot-20",
+  "kind": "headnotes",
+  "record_schema": "schemas/headnotes.record.v1.schema.json",
+  "status": "complete",
+  "created": "2026-11-25",
+  "completed": "2026-11-25",
+  "description": "Pilot: 70 headnotes for 20 federal court of appeals decisions, written by Claude agents in a cloud session from CourtListener text, to compare with the Haiku run of headnotes-circuits-v1 on the same decisions.",
+  "producer": {
+    "model": null,
+    "method": "Claude agents in a cloud session (4 workers in parallel), reading each opinion through the CourtListener API; not the Message Batches API.",
+    "params": {}
+  },
+  "prompt": {
+    "file": "prompt.md",
+    "sha256": "b517c56528a401e094853c78ee399b19808d925360fc1745552fe17093fadaf1",
+    "version": "pilot-cloud-reconstructed",
+    "verbatim": false
+  },
+  "taxonomy": {
+    "name": "headnotes-v2",
+    "slug_count": 681,
+    "verified": false
+  },
+  "request_set": null,
+  "input": {
+    "source": "CourtListener API, opinion html_with_citations (the lead opinion of each cluster), read in full.",
+    "paragraph_numbering": "Count of blocks in CourtListener html_with_citations, caption lines included where present. Not build.py's numbering of graph.opinion_text.",
+    "max_input_bytes": null,
+    "truncation": "None: whole opinions were read."
+  },
+  "selection": "Haiku agent list 897, ranks 16881-16900 of request set headnotes-circuits-v1; all 20 were shown assembled into the Haiku results on 2026-11-25, so each has a Haiku answer to compare. Courts: ca4 x4, ca6 x3, ca7 x3, ca11 x3, ca8 x2, cafc x2, ca5, ca9, ca10. Dates 1915 to 2024.",
+  "counts": {
+    "records": 20,
+    "headnotes": 70,
+    "by_status": {"ok": 20}
+  },
+  "compare_with": [
+    "headnotes-circuits-v1 (Haiku run, not yet in this repository)"
+  ],
+  "cost": {
+    "tokens_per_decision_approx": 44000,
+    "tokens_total_approx": 875000,
+    "wall_clock_minutes_approx": 4,
+    "note": "Recovering the answer format from the Haiku run's transcript cost about 315,000 more tokens, once."
+  },
+  "caveats": [
+    "The prompt is a reconstruction from what the Haiku run's transcript showed, not the text of data/prompts/headnotes.md; where the Haiku agents reported a rule differently, the stricter version was used.",
+    "Concept slugs are guesses in the style of the headnotes-v2 taxonomy, which was not available; most will fail a slug check until remapped. Compare topics, not strings.",
+    "Paragraph numbers count blocks in CourtListener's html_with_citations, not build.py's paragraphs of graph.opinion_text, so treat them as approximate; each headnote's anchors give the first words of the cited paragraphs.",
+    "The Haiku requests were cut to about 48,000 bytes (first 36,000 and last 12,000); here whole opinions were read, so the four long ones (clusters 430606, 667661, 10036018, 771850) may have headnotes from text Haiku never saw.",
+    "The word limit used was 60; the Haiku agents reported limits between 60 and 75.",
+    "Cluster 10036018 (Joshi v. Garland): CourtListener's text came from a PDF, so its paragraph spans are rough.",
+    "Cluster 282376 (MacMillan Oil) is a short per curiam affirming on the district court's opinion; it got one real headnote rather than a no_holding status, and the Haiku run may differ.",
+    "producer.model is left null in this repository; the model is named in the pilot's own notes in the Starfield project folder.",
+    "extra.haiku_rank is the request's rank in headnotes-circuits-v1; extra.notes are the writer's notes on each decision."
+  ]
+}

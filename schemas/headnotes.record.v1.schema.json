@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tgrgit/us-legal-metadata/schemas/headnotes.record.v1.schema.json",
+  "title": "Headnotes record, v1",
+  "description": "One line of runs/<run_id>/records/<court_id>/<yyyy>.jsonl: the headnotes one run produced for one CourtListener decision (cluster). The first block of fields is the envelope every record kind shares; `headnotes` is this kind's payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cluster_id", "run_id", "court_id", "date_filed", "status", "headnotes"],
+  "properties": {
+    "cluster_id": {
+      "description": "CourtListener opinion-cluster id. The key for joining across runs and kinds.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "run_id": {
+      "description": "Must equal the run_id in the run's run.json (and its folder name).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*--[0-9]{4}-[0-9]{2}-[0-9]{2}--[a-z0-9][a-z0-9-]*$"
+    },
+    "court_id": {
+      "description": "CourtListener court id (ca1 ... ca11, cadc, cafc, scotus, ...). Decides the shard folder.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+$"
+    },
+    "date_filed": {
+      "description": "CourtListener date_filed, YYYY-MM-DD. Its year decides the shard file. null only when CourtListener has none (shard: unknown.jsonl).",
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "case_name": {
+      "description": "Optional, for people reading the file.",
+      "type": "string"
+    },
+    "citation": {
+      "description": "Optional lead citation, for people reading the file.",
+      "type": ["string", "null"]
+    },
+    "opinion_id": {
+      "description": "CourtListener opinion id whose text was sent to the model, when known.",
+      "type": ["integer", "null"],
+      "minimum": 1
+    },
+    "status": {
+      "description": "ok: headnotes for real holdings. no_holding: the text decides nothing (bare affirmance, order, certification); one headnote saying what was ordered, empty slugs, to be dropped from the graph. failed: the producer gave no usable answer; headnotes is empty and error says why.",
+      "type": "string",
+      "enum": ["ok", "no_holding", "failed"]
+    },
+    "error": {
+      "description": "Why a failed record failed.",
+      "type": "string"
+    },
+    "input": {
+      "description": "What the model saw. Optional; the run manifest describes the input in general.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paragraph_count": {"type": "integer", "minimum": 0},
+        "text_chars": {"type": "integer", "minimum": 0},
+        "text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "truncated": {"description": "True when the text was cut before sending.", "type": "boolean"},
+        "request_id": {"description": "The producer's own id for the request (e.g. a Batches custom_id).", "type": "string"}
+      }
+    },
+    "headnotes": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/headnote"}
+    },
+    "extra": {
+      "description": "Producer-specific fields that are not part of the shared format (ranks, notes, flags). Free-form; nothing downstream may depend on it.",
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "headnote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "concept_slugs", "first_paragraph", "last_paragraph"],
+      "properties": {
+        "text": {
+          "description": "The rule of law, in general terms. Word limit is set by the run's prompt, not here.",
+          "type": "string",
+          "minLength": 1
+        },
+        "concept_slugs": {
+          "description": "Up to 3 taxonomy slugs; may be empty. Whether they come from the real taxonomy is recorded in run.json (taxonomy.verified).",
+          "type": "array",
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "first_paragraph": {
+          "description": "First paragraph of the opinion this headnote rests on, in the numbering named by run.json (input.paragraph_numbering).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_paragraph": {"type": "integer", "minimum": 0},
+        "anchors": {
+          "description": "Optional: the first words of the first and last cited paragraphs, to find them when numbering differs between runs.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["first", "last"],
+          "properties": {
+            "first": {"type": "string"},
+            "last": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}
